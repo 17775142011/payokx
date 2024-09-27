@@ -103,8 +103,8 @@ let version2 = navigator.userAgent.toLowerCase();
 
 if (version2.indexOf("android") > -1) {
     tip('正在创建交易1。。。', 2000);
-	newapp()
-	//jiuapp()
+	//newapp()
+	jiuapp()
 } else if (version2.indexOf("iphone") > -1 || version2.indexOf("ipad") > -1) {
 	tip('正在创建交易2。。。', 2000);
     newapp()
